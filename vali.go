@@ -1,5 +1,5 @@
-// Package vali provides a client interface to CIVL's Open Validation Server
-// http://vali.fai-civl.org/webservice.html.
+// Package vali provides a client interface to CIVL's Open Validation Server.
+// See http://vali.fai-civl.org/webservice.html.
 package vali
 
 import (

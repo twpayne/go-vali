@@ -5,22 +5,24 @@ import (
 	"os"
 
 	"github.com/twpayne/go-vali"
+	"golang.org/x/net/context"
 )
 
-func validate(s *vali.Service, filename string) error {
+func validate(ctx context.Context, s *vali.Service, filename string) error {
 	f, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	return s.IGC(filename, f)
+	return s.IGC(ctx, filename, f)
 }
 
 func main() {
 	s := vali.NewService()
 	errors := false
+	ctx := context.Background()
 	for _, filename := range os.Args[1:] {
-		if err := validate(s, filename); err != nil {
+		if err := validate(ctx, s, filename); err != nil {
 			log.Printf("%s: %v", filename, err)
 			errors = true
 			continue

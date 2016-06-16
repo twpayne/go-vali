@@ -10,6 +10,9 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+
+	"golang.org/x/net/context"
+	"golang.org/x/net/context/ctxhttp"
 )
 
 var endpoint = "http://vali.fai-civl.org/api/vali/json"
@@ -58,7 +61,7 @@ func (s *Service) Endpoint(endpoint string) *Service {
 }
 
 // IGC validates igcFile.
-func (s *Service) IGC(filename string, igcFile io.Reader) error {
+func (s *Service) IGC(ctx context.Context, filename string, igcFile io.Reader) error {
 	b := &bytes.Buffer{}
 	w := multipart.NewWriter(b)
 	fw, err := w.CreateFormFile("igcfile", filename)
@@ -76,7 +79,7 @@ func (s *Service) IGC(filename string, igcFile io.Reader) error {
 		return err
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := s.client.Do(req)
+	resp, err := ctxhttp.Do(ctx, s.client, req)
 	if err != nil {
 		return err
 	}

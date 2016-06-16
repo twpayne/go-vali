@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-var ENDPOINT = "http://vali.fai-civl.org/api/vali/json"
+var endpoint = "http://vali.fai-civl.org/api/vali/json"
 
 // A Response represents a response from the server.
 type Response struct {
@@ -48,7 +48,7 @@ type Service struct {
 func NewService() *Service {
 	return &Service{
 		client:   &http.Client{},
-		endpoint: ENDPOINT,
+		endpoint: endpoint,
 	}
 }
 

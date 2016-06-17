@@ -41,6 +41,23 @@ func (se ServerError) Error() string {
 	return fmt.Sprintf("vali: %d %s", se.HTTPStatusCode, se.HTTPStatus)
 }
 
+// An Option is an option for configuring a Service.
+type Option func(*Service)
+
+// Client sets the http.Client.
+func Client(client *http.Client) Option {
+	return func(s *Service) {
+		s.client = client
+	}
+}
+
+// Endpoint sets the HTTP endpoint.
+func Endpoint(endpoint string) Option {
+	return func(s *Service) {
+		s.endpoint = endpoint
+	}
+}
+
 // A Service represents a validator service.
 type Service struct {
 	client   *http.Client
@@ -48,15 +65,14 @@ type Service struct {
 }
 
 // NewService returns a new Service.
-func NewService() *Service {
-	return &Service{
+func NewService(options ...Option) *Service {
+	s := &Service{
 		client:   &http.Client{},
 		endpoint: endpoint,
 	}
-}
-
-func (s *Service) Endpoint(endpoint string) *Service {
-	s.endpoint = endpoint
+	for _, o := range options {
+		o(s)
+	}
 	return s
 }
 

@@ -76,8 +76,8 @@ func NewService(options ...Option) *Service {
 	return s
 }
 
-// IGC validates igcFile.
-func (s *Service) IGC(ctx context.Context, filename string, igcFile io.Reader) error {
+// ValidateIGC validates igcFile.
+func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) error {
 	b := &bytes.Buffer{}
 	w := multipart.NewWriter(b)
 	fw, err := w.CreateFormFile("igcfile", filename)

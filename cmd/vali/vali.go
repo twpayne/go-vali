@@ -14,7 +14,7 @@ func validate(ctx context.Context, s *vali.Service, filename string) error {
 		return err
 	}
 	defer f.Close()
-	return s.IGC(ctx, filename, f)
+	return s.ValidateIGC(ctx, filename, f)
 }
 
 func main() {

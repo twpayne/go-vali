@@ -18,7 +18,7 @@ func validate(ctx context.Context, s *vali.Service, filename string) (bool, erro
 }
 
 func main() {
-	s := vali.NewService()
+	s := vali.New()
 	errors := false
 	ctx := context.Background()
 	for _, filename := range os.Args[1:] {

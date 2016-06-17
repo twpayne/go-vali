@@ -16,7 +16,7 @@ func ExampleService_ValidateIGC() {
 	}
 	defer igcFile.Close()
 	ctx := context.Background()
-	if ok, err := NewService().ValidateIGC(ctx, filename, igcFile); ok {
+	if ok, err := New().ValidateIGC(ctx, filename, igcFile); ok {
 		fmt.Println("OK")
 	} else {
 		fmt.Println(err)

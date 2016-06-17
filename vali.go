@@ -64,8 +64,8 @@ type Service struct {
 	endpoint string
 }
 
-// NewService returns a new Service.
-func NewService(options ...Option) *Service {
+// New returns a new Service.
+func New(options ...Option) *Service {
 	s := &Service{
 		client:   &http.Client{},
 		endpoint: endpoint,

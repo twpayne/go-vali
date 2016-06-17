@@ -27,7 +27,7 @@ type Response struct {
 	Server string `json:"server"`
 }
 
-func (r Response) Error() string {
+func (r *Response) Error() string {
 	return fmt.Sprintf("vali: %s", r.Msg)
 }
 
@@ -37,7 +37,7 @@ type ServerError struct {
 	HTTPStatus     string
 }
 
-func (se ServerError) Error() string {
+func (se *ServerError) Error() string {
 	return fmt.Sprintf("vali: %d %s", se.HTTPStatusCode, se.HTTPStatus)
 }
 
@@ -104,7 +104,7 @@ func (s *Service) IGC(ctx context.Context, filename string, igcFile io.Reader) e
 		return err
 	}
 	if resp.StatusCode < 200 || 300 <= resp.StatusCode {
-		return ServerError{
+		return &ServerError{
 			HTTPStatusCode: resp.StatusCode,
 			HTTPStatus:     resp.Status,
 		}
@@ -114,7 +114,7 @@ func (s *Service) IGC(ctx context.Context, filename string, igcFile io.Reader) e
 		return err
 	}
 	if r.Result != "PASSED" {
-		return r
+		return &r
 	}
 	return nil
 }

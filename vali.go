@@ -99,8 +99,10 @@ func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.R
 	if err != nil {
 		return false, err
 	}
-	var body []byte
-	body, err = ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return false, err
+	}
 	if err := resp.Body.Close(); err != nil {
 		return false, err
 	}

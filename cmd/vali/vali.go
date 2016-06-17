@@ -8,10 +8,10 @@ import (
 	"golang.org/x/net/context"
 )
 
-func validate(ctx context.Context, s *vali.Service, filename string) error {
+func validate(ctx context.Context, s *vali.Service, filename string) (bool, error) {
 	f, err := os.Open(filename)
 	if err != nil {
-		return err
+		return false, err
 	}
 	defer f.Close()
 	return s.ValidateIGC(ctx, filename, f)
@@ -22,7 +22,7 @@ func main() {
 	errors := false
 	ctx := context.Background()
 	for _, filename := range os.Args[1:] {
-		if err := validate(ctx, s, filename); err != nil {
+		if ok, err := validate(ctx, s, filename); !ok {
 			log.Printf("%s: %v", filename, err)
 			errors = true
 			continue

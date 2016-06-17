@@ -77,45 +77,42 @@ func NewService(options ...Option) *Service {
 }
 
 // ValidateIGC validates igcFile.
-func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) error {
+func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) (bool, error) {
 	b := &bytes.Buffer{}
 	w := multipart.NewWriter(b)
 	fw, err := w.CreateFormFile("igcfile", filename)
 	if err != nil {
-		return err
+		return false, err
 	}
 	if _, err = io.Copy(fw, igcFile); err != nil {
-		return err
+		return false, err
 	}
 	if err := w.Close(); err != nil {
-		return err
+		return false, err
 	}
 	req, err := http.NewRequest("POST", s.endpoint, b)
 	if err != nil {
-		return err
+		return false, err
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	resp, err := ctxhttp.Do(ctx, s.client, req)
 	if err != nil {
-		return err
+		return false, err
 	}
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	if err := resp.Body.Close(); err != nil {
-		return err
+		return false, err
 	}
 	if resp.StatusCode < 200 || 300 <= resp.StatusCode {
-		return &ServerError{
+		return false, &ServerError{
 			HTTPStatusCode: resp.StatusCode,
 			HTTPStatus:     resp.Status,
 		}
 	}
 	var r Response
 	if err := json.Unmarshal(body, &r); err != nil {
-		return err
+		return false, err
 	}
-	if r.Result != "PASSED" {
-		return &r
-	}
-	return nil
+	return r.Result == "PASSED", &r
 }

@@ -1,5 +1,6 @@
 # go-vali
 
+[![Build Status](https://travis-ci.org/twpayne/go-vali.svg?branch=master)](https://travis-ci.org/twpayne/go-vali)
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vali?status.svg)](https://godoc.org/github.com/twpayne/go-vali)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vali)](https://goreportcard.com/report/github.com/twpayne/go-vali)
 

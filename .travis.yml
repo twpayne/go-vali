@@ -1,0 +1,18 @@
+language: go
+
+go:
+        - 1.6.2
+
+install:
+        - go get github.com/golang/lint/golint
+        - go get golang.org/x/net/context
+        - go get golang.org/x/net/context/ctxhttp
+
+script:
+        - go test -v ./...
+        - go test -cover -race ./...
+        - go vet ./...
+        - test -z "$(find . -name \*.go | xargs gofmt -s -d)"
+        - golint ./...
+
+sudo: false

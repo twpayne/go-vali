@@ -84,7 +84,7 @@ func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.R
 	if err != nil {
 		return err
 	}
-	if _, err := io.Copy(fw, igcFile); err != nil {
+	if _, err = io.Copy(fw, igcFile); err != nil {
 		return err
 	}
 	if err := w.Close(); err != nil {
@@ -99,7 +99,8 @@ func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.R
 	if err != nil {
 		return err
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	var body []byte
+	body, err = ioutil.ReadAll(resp.Body)
 	if err := resp.Body.Close(); err != nil {
 		return err
 	}

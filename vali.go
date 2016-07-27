@@ -17,6 +17,31 @@ import (
 
 var endpoint = "http://vali.fai-civl.org/api/vali/json"
 
+// A Status indicates the validity of an IGC file.
+type Status int
+
+const (
+	// Valid indicates that the IGC file is valid.
+	Valid Status = iota
+	// Invalid indicates that the IGC file is invalid.
+	Invalid
+	// Unknown indicates that the validity of the IGC file is unknown.
+	Unknown
+)
+
+func (s Status) String() string {
+	switch s {
+	case Valid:
+		return "Valid"
+	case Invalid:
+		return "Invalid"
+	case Unknown:
+		return "Unknown"
+	default:
+		return "Invalid Status"
+	}
+}
+
 // A Response represents a response from the server.
 type Response struct {
 	Result string `json:"result"`
@@ -77,44 +102,47 @@ func New(options ...Option) *Service {
 }
 
 // ValidateIGC validates igcFile.
-func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) (bool, error) {
+func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) (Status, error) {
 	b := &bytes.Buffer{}
 	w := multipart.NewWriter(b)
 	fw, err := w.CreateFormFile("igcfile", filename)
 	if err != nil {
-		return false, err
+		return Unknown, err
 	}
 	if _, err = io.Copy(fw, igcFile); err != nil {
-		return false, err
+		return Unknown, err
 	}
 	if err := w.Close(); err != nil {
-		return false, err
+		return Unknown, err
 	}
 	req, err := http.NewRequest("POST", s.endpoint, b)
 	if err != nil {
-		return false, err
+		return Unknown, err
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	resp, err := ctxhttp.Do(ctx, s.client, req)
 	if err != nil {
-		return false, err
+		return Unknown, err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return false, err
+		return Unknown, err
 	}
 	if err := resp.Body.Close(); err != nil {
-		return false, err
+		return Unknown, err
 	}
 	if resp.StatusCode < 200 || 300 <= resp.StatusCode {
-		return false, &ServerError{
+		return Unknown, &ServerError{
 			HTTPStatusCode: resp.StatusCode,
 			HTTPStatus:     resp.Status,
 		}
 	}
 	var r Response
 	if err := json.Unmarshal(body, &r); err != nil {
-		return false, err
+		return Unknown, err
 	}
-	return r.Result == "PASSED", &r
+	if r.Result == "PASSED" {
+		return Valid, &r
+	}
+	return Invalid, &r
 }

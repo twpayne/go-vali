@@ -15,7 +15,7 @@ import (
 	"golang.org/x/net/context/ctxhttp"
 )
 
-var endpoint = "http://vali.fai-civl.org/api/vali/json"
+var defaultEndpoint = "http://vali.fai-civl.org/api/vali/json"
 
 // A Status indicates the validity of an IGC file.
 type Status int
@@ -93,7 +93,7 @@ type Service struct {
 func New(options ...Option) *Service {
 	s := &Service{
 		client:   &http.Client{},
-		endpoint: endpoint,
+		endpoint: defaultEndpoint,
 	}
 	for _, o := range options {
 		o(s)

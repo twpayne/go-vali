@@ -19,7 +19,7 @@ func validate(ctx context.Context, s *vali.Service, filename string) (vali.Statu
 
 func main() {
 	s := vali.New()
-	errors := false
+	worstStatus := vali.Valid
 	ctx := context.Background()
 	for _, filename := range os.Args[1:] {
 		status, err := validate(ctx, s, filename)
@@ -28,10 +28,10 @@ func main() {
 			log.Printf("%s: %s", filename, status)
 		case vali.Invalid, vali.Unknown:
 			log.Printf("%s: %s: %s", filename, status, err)
-			errors = true
+		}
+		if status > worstStatus {
+			worstStatus = status
 		}
 	}
-	if errors {
-		os.Exit(1)
-	}
+	os.Exit(int(worstStatus))
 }

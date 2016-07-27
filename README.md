@@ -28,4 +28,17 @@ func ExampleNew_ValidateIGC() {
 }
 ```
 
+A simple command line client is included. Install and run it with:
+
+```bash
+$ go install github.com/twpayne/go-vali/cmd/vali
+$ vali filename.igc
+2016/07/27 13:06:08 filename.igc: Valid
+$ echo $?
+0
+```
+
+The exit code is `0` if the IGC file is valid, `1` if it is invalid, or `2` if
+it could not be validated.
+
 [License](LICENSE)

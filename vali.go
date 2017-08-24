@@ -4,15 +4,13 @@ package vali
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
-
-	"golang.org/x/net/context"
-	"golang.org/x/net/context/ctxhttp"
 )
 
 var defaultEndpoint = "http://vali.fai-civl.org/api/vali/json"
@@ -119,8 +117,9 @@ func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.R
 	if err != nil {
 		return Unknown, err
 	}
+	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := ctxhttp.Do(ctx, s.client, req)
+	resp, err := s.client.Do(req)
 	if err != nil {
 		return Unknown, err
 	}

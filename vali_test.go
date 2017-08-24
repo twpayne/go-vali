@@ -1,10 +1,11 @@
-package vali
+package vali_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 
-	"golang.org/x/net/context"
+	"github.com/twpayne/go-vali"
 )
 
 func ExampleService_ValidateIGC() {
@@ -16,7 +17,7 @@ func ExampleService_ValidateIGC() {
 	}
 	defer igcFile.Close()
 	ctx := context.Background()
-	if status, err := New().ValidateIGC(ctx, filename, igcFile); status == Valid {
+	if status, err := vali.New().ValidateIGC(ctx, filename, igcFile); status == vali.Valid {
 		fmt.Println("OK")
 	} else {
 		fmt.Println(err)

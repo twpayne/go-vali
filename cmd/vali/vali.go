@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
 	"github.com/twpayne/go-vali"
-	"golang.org/x/net/context"
 )
 
 func validate(ctx context.Context, s *vali.Service, filename string) (vali.Status, error) {

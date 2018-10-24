@@ -1,9 +1,5 @@
 language: go
 
-go:
-        - 1.7.x
-        - 1.x
-
 install:
         - go get golang.org/x/lint/golint
 

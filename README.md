@@ -32,7 +32,7 @@ A simple command line client is included. Install and run it with:
 ```bash
 $ go install github.com/twpayne/go-vali/cmd/vali
 $ vali filename.igc
-2016/07/27 13:06:08 filename.igc: Valid
+filename.igc: Valid
 $ echo $?
 0
 ```

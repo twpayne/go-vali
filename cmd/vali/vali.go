@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"os"
 
-	"github.com/twpayne/go-vali"
+	vali "github.com/twpayne/go-vali"
 )
 
 func validate(ctx context.Context, s *vali.Service, filename string) (vali.Status, error) {
@@ -25,9 +25,9 @@ func main() {
 		status, err := validate(ctx, s, filename)
 		switch status {
 		case vali.Valid:
-			log.Printf("%s: %s", filename, status)
+			fmt.Printf("%s: %s\n", filename, status)
 		case vali.Invalid, vali.Unknown:
-			log.Printf("%s: %s: %s", filename, status, err)
+			fmt.Printf("%s: %s: %s\n", filename, status, err)
 		}
 		if status > worstStatus {
 			worstStatus = status

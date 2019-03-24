@@ -4,27 +4,26 @@
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vali?status.svg)](https://godoc.org/github.com/twpayne/go-vali)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vali)](https://goreportcard.com/report/github.com/twpayne/go-vali)
 
-Package vali provides a client interface to CIVL's Open Validation Server.
-See http://vali.fai-civl.org/webservice.html.
+Package `vali` provides a client interface to [CIVL's Open Validation Server](http://vali.fai-civl.org/webservice.html).
 
-Example:
+## Example
 
 ```go
 func ExampleNew_ValidateIGC() {
-	filename := "testdata/2006-06-10-XXX-3XI-01.IGC"
-	igcFile, err := os.Open(filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer igcFile.Close()
-	ctx := context.Background()
-	if status, err := vali.New().ValidateIGC(ctx, filename, igcFile); status == vali.Valid {
-		fmt.Println("OK")
-	} else {
-		fmt.Println(err)
-	}
-	// Output: OK
+    filename := "testdata/2006-06-10-XXX-3XI-01.IGC"
+    igcFile, err := os.Open(filename)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer igcFile.Close()
+    ctx := context.Background()
+    if status, err := vali.New().ValidateIGC(ctx, filename, igcFile); status == vali.Valid {
+        fmt.Println("OK")
+    } else {
+        fmt.Println(err)
+    }
+    // Output: OK
 }
 ```
 
@@ -41,4 +40,6 @@ $ echo $?
 The exit code is `0` if the IGC file is valid, `1` if it is invalid, or `2` if
 it could not be validated.
 
-[License](LICENSE)
+## License
+
+MIT

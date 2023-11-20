@@ -1,10 +1,9 @@
 # go-vali
 
-[![Build Status](https://travis-ci.org/twpayne/go-vali.svg?branch=master)](https://travis-ci.org/twpayne/go-vali)
-[![GoDoc](https://godoc.org/github.com/twpayne/go-vali?status.svg)](https://godoc.org/github.com/twpayne/go-vali)
-[![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vali)](https://goreportcard.com/report/github.com/twpayne/go-vali)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-vali)](https://pkg.go.dev/github.com/twpayne/go-vali)
 
-Package `vali` provides a client interface to [CIVL's Open Validation Server](http://vali.fai-civl.org/webservice.html).
+Package `vali` provides a client interface to [CIVL's Open Validation
+Server](http://vali.fai-civl.org/webservice.html).
 
 ## Example
 
@@ -18,7 +17,7 @@ func ExampleNew_ValidateIGC() {
     }
     defer igcFile.Close()
     ctx := context.Background()
-    if status, err := vali.New().ValidateIGC(ctx, filename, igcFile); status == vali.Valid {
+    if status, _, err := vali.New().ValidateIGC(ctx, filename, igcFile); status == vali.Valid {
         fmt.Println("OK")
     } else {
         fmt.Println(err)
@@ -30,7 +29,7 @@ func ExampleNew_ValidateIGC() {
 A simple command line client is included. Install and run it with:
 
 ```bash
-$ go install github.com/twpayne/go-vali/cmd/vali
+$ go install github.com/twpayne/go-vali/cmd/vali@latest
 $ vali filename.igc
 filename.igc: Valid
 $ echo $?

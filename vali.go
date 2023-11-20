@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 )
@@ -19,24 +18,21 @@ var defaultEndpoint = "http://vali.fai-civl.org/api/vali/json"
 type Status int
 
 const (
-	// Valid indicates that the IGC file is valid.
-	Valid Status = iota
-	// Invalid indicates that the IGC file is invalid.
-	Invalid
-	// Unknown indicates that the validity of the IGC file is unknown.
-	Unknown
+	StatusUnknown Status = iota // Unknown indicates that the validity of the IGC file is unknown.
+	StatusValid                 // Valid indicates that the IGC file is valid.
+	StatusInvalid               // Invalid indicates that the IGC file is invalid.
 )
 
 func (s Status) String() string {
 	switch s {
-	case Valid:
+	case StatusValid:
 		return "Valid"
-	case Invalid:
+	case StatusInvalid:
 		return "Invalid"
-	case Unknown:
+	case StatusUnknown:
 		return "Unknown"
 	default:
-		return "Invalid Status"
+		return "Invalid status"
 	}
 }
 
@@ -50,8 +46,8 @@ type Response struct {
 	Server string `json:"server"`
 }
 
-func (r *Response) Error() string {
-	return fmt.Sprintf("vali: %s", r.Msg)
+func (r Response) Passed() bool {
+	return r.Result == "PASSED"
 }
 
 // A ServerError represents a server error.
@@ -100,48 +96,48 @@ func New(options ...Option) *Service {
 }
 
 // ValidateIGC validates igcFile.
-func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) (Status, error) {
+func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) (Status, *Response, error) {
 	b := &bytes.Buffer{}
 	w := multipart.NewWriter(b)
 	fw, err := w.CreateFormFile("igcfile", filename)
 	if err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
 	if _, err = io.Copy(fw, igcFile); err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
 	if err := w.Close(); err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
-	req, err := http.NewRequest("POST", s.endpoint, b)
+	req, err := http.NewRequest(http.MethodPost, s.endpoint, b)
 	if err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	resp, err := s.client.Do(req)
 	if err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
 	if err := resp.Body.Close(); err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
-	if resp.StatusCode < 200 || 300 <= resp.StatusCode {
-		return Unknown, &ServerError{
+	if resp.StatusCode < http.StatusOK || http.StatusMultipleChoices <= resp.StatusCode {
+		return StatusUnknown, nil, &ServerError{
 			HTTPStatusCode: resp.StatusCode,
 			HTTPStatus:     resp.Status,
 		}
 	}
 	var r Response
 	if err := json.Unmarshal(body, &r); err != nil {
-		return Unknown, err
+		return StatusUnknown, nil, err
 	}
-	if r.Result == "PASSED" {
-		return Valid, &r
+	if r.Passed() {
+		return StatusValid, &r, nil
 	}
-	return Invalid, &r
+	return StatusInvalid, &r, nil
 }

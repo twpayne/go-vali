@@ -60,34 +60,34 @@ func (se *ServerError) Error() string {
 	return fmt.Sprintf("vali: %d %s", se.HTTPStatusCode, se.HTTPStatus)
 }
 
-// An Option is an option for configuring a Service.
-type Option func(*Service)
+// An ClientOption is an option for configuring a Client.
+type ClientOption func(*Client)
 
-// Client sets the http.Client.
-func Client(client *http.Client) Option {
-	return func(s *Service) {
-		s.client = client
+// WithHTTPClient sets the http.WithHTTPClient.
+func WithHTTPClient(httpClient *http.Client) ClientOption {
+	return func(s *Client) {
+		s.httpClient = httpClient
 	}
 }
 
-// Endpoint sets the HTTP endpoint.
-func Endpoint(endpoint string) Option {
-	return func(s *Service) {
+// WithEndpoint sets the HTTP endpoint.
+func WithEndpoint(endpoint string) ClientOption {
+	return func(s *Client) {
 		s.endpoint = endpoint
 	}
 }
 
-// A Service represents a validator service.
-type Service struct {
-	client   *http.Client
-	endpoint string
+// A Client is a validator service client.
+type Client struct {
+	httpClient *http.Client
+	endpoint   string
 }
 
-// New returns a new Service.
-func New(options ...Option) *Service {
-	s := &Service{
-		client:   &http.Client{},
-		endpoint: defaultEndpoint,
+// NewClient returns a new Client.
+func NewClient(options ...ClientOption) *Client {
+	s := &Client{
+		httpClient: &http.Client{},
+		endpoint:   defaultEndpoint,
 	}
 	for _, o := range options {
 		o(s)
@@ -96,7 +96,7 @@ func New(options ...Option) *Service {
 }
 
 // ValidateIGC validates igcFile.
-func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) (Status, *Response, error) {
+func (s *Client) ValidateIGC(ctx context.Context, filename string, igcFile io.Reader) (Status, *Response, error) {
 	b := &bytes.Buffer{}
 	w := multipart.NewWriter(b)
 	fw, err := w.CreateFormFile("igcfile", filename)
@@ -115,7 +115,7 @@ func (s *Service) ValidateIGC(ctx context.Context, filename string, igcFile io.R
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := s.client.Do(req)
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return StatusUnknown, nil, err
 	}

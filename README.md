@@ -8,7 +8,7 @@ Server](http://vali.fai-civl.org/webservice.html).
 ## Example
 
 ```go
-func ExampleNew_ValidateIGC() {
+func ExampleClient_ValidateIGC() {
     filename := "testdata/2006-06-10-XXX-3XI-01.IGC"
     igcFile, err := os.Open(filename)
     if err != nil {
@@ -17,7 +17,7 @@ func ExampleNew_ValidateIGC() {
     }
     defer igcFile.Close()
     ctx := context.Background()
-    if status, _, err := vali.New().ValidateIGC(ctx, filename, igcFile); status == vali.Valid {
+    if status, _, err := vali.NewClient().ValidateIGC(ctx, filename, igcFile); status == vali.Valid {
         fmt.Println("OK")
     } else {
         fmt.Println(err)

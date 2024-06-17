@@ -14,7 +14,7 @@ import (
 	"github.com/twpayne/go-vali"
 )
 
-func ExampleService_ValidateIGC() {
+func ExampleClient_ValidateIGC() {
 	filename := "testdata/2006-06-10-XXX-3XI-01.IGC"
 	igcFile, err := os.Open(filename)
 	if err != nil {
@@ -23,7 +23,7 @@ func ExampleService_ValidateIGC() {
 	}
 	defer igcFile.Close()
 	ctx := context.Background()
-	if status, _, err := vali.New().ValidateIGC(ctx, filename, igcFile); status == vali.StatusValid {
+	if status, _, err := vali.NewClient().ValidateIGC(ctx, filename, igcFile); status == vali.StatusValid {
 		fmt.Println("OK")
 	} else {
 		fmt.Println(err)
@@ -31,7 +31,7 @@ func ExampleService_ValidateIGC() {
 	// Output: OK
 }
 
-func TestService_ValidateIGC(t *testing.T) {
+func TestClient_ValidateIGC(t *testing.T) {
 	ctx := context.Background()
 	filename := "testdata/2006-06-10-XXX-3XI-01.IGC"
 	data, err := os.ReadFile(filename)
@@ -50,7 +50,7 @@ func TestService_ValidateIGC(t *testing.T) {
 		},
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			status, _, err := vali.New().ValidateIGC(ctx, filename, bytes.NewReader(tc.data))
+			status, _, err := vali.NewClient().ValidateIGC(ctx, filename, bytes.NewReader(tc.data))
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedStatus, status)
 		})

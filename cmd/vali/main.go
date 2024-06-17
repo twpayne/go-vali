@@ -8,7 +8,7 @@ import (
 	vali "github.com/twpayne/go-vali"
 )
 
-func validate(ctx context.Context, s *vali.Service, filename string) (vali.Status, *vali.Response, error) {
+func validate(ctx context.Context, s *vali.Client, filename string) (vali.Status, *vali.Response, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return vali.StatusUnknown, nil, err
@@ -18,7 +18,7 @@ func validate(ctx context.Context, s *vali.Service, filename string) (vali.Statu
 }
 
 func main() {
-	s := vali.New()
+	s := vali.NewClient()
 	worstStatus := vali.StatusValid
 	ctx := context.Background()
 	for _, filename := range os.Args[1:] {

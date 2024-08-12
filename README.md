@@ -1,5 +1,7 @@
 # go-vali
 
+**This package has moved to [github.com/twpayne/go-igc/civlovs](https://pkg.go.dev/github.com/twpayne/go-igc/civlovs). This repo is archived.**
+
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-vali)](https://pkg.go.dev/github.com/twpayne/go-vali)
 
 Package `vali` provides a client interface to [CIVL's Open Validation
